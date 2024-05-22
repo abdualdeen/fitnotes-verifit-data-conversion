@@ -6,28 +6,30 @@ import csv
 VERIFIT_COLUMNS = 'Date,Exercise,Category,Weight (kg),Reps,Comment'
 
 def main():
-    args = sys.argv
-    if args[1].lower == 'help':
-        print('ex usage: python convert.py [FitNotesBackupCSVFile] [OptionalVeriFitBackupFile]')
-        return
+    parser = argparse.ArgumentParser(prog='convert', description='Converts FitNotes backup to a format verifit can import.')
+    parser.add_argument('fitNotesFilePath', help='FitNotes CSV backup file path.')
+    parser.add_argument('veriFitFilePath', help='Verifit txt backup file path.', default=None, nargs='?')
     
-    if args[1] is None:
-        print('Error: did not provide a file to convert.') 
+    args = parser.parse_args()
 
     # input validation
     if not Path(args[1]).is_file():
         print(args[1], ' is not a file')
+        return
 
     if not args[1].endswith('.csv'):
         print(args[1], ' is not a csv file')
+        return
     
     
     if args[2] is not None:
         if not Path(args[2]).is_file():
             print(args[2], ' is not a file')
+            return
             
         if not args[2].endswith('.txt'):
             print(args[2], ' is not a csv file')
+            return
         
     # open fitNotes CSV file and read the data
     with open(args[1], 'r', encoding="utf-8") as fitNotesFile:
