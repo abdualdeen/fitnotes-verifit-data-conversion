@@ -1,4 +1,3 @@
-import sys
 import argparse
 from pathlib import Path
 import csv
@@ -34,6 +33,7 @@ def main():
         
     # open fitNotes CSV file and read the data
     with open(args.fitNotesFilePath, 'r', encoding="utf-8") as fitNotesFile:
+        
         next(fitNotesFile) # skip the header
         csvReader = csv.reader(fitNotesFile)
         with open('newVeriFitBackup.txt', 'w', encoding="utf-8") as newFile:
@@ -47,12 +47,14 @@ def main():
     # merge the verifit backup data if it exists.    
     if args.veriFitFilePath is not None:
         with open(args.veriFitFilePath, 'r', encoding="utf-8") as veriFitFile:
+            
+            next(veriFitFile)# skip the header
             lines = veriFitFile.readlines()
             with open('newVeriFitBackup.txt', 'a', encoding="utf-8") as newFile:
                 for line in lines:
-                    newFile.write(line+'\n')
+                    newFile.write(line)
                     
-    print("Operation Completed!")
+    print("\033[92mOperation Completed!")
             
 
 if __name__=="__main__":
