@@ -3,7 +3,7 @@ import argparse
 from pathlib import Path
 import csv
 
-VERIFIT_COLUMNS = 'Date,Exercise,Category,Weight (kg),Reps,Comment'
+VERIFIT_COLUMNS = 'Date,Exercise,Category,Weight (kg),Reps,Comment\n'
 
 def main():
     parser = argparse.ArgumentParser(prog='convert', description='Converts FitNotes backup to a format verifit can import.')
@@ -13,42 +13,44 @@ def main():
     args = parser.parse_args()
 
     # input validation
-    if not Path(args[1]).is_file():
-        print(args[1], ' is not a file')
+    print(args.fitNotesFilePath)
+    if not Path(args.fitNotesFilePath).is_file():
+        print(args.fitNotesFilePath, ' is not a file')
         return
 
-    if not args[1].endswith('.csv'):
-        print(args[1], ' is not a csv file')
+    if not args.fitNotesFilePath.endswith('.csv'):
+        print(args.fitNotesFilePath, ' is not a csv file')
         return
     
     
-    if args[2] is not None:
-        if not Path(args[2]).is_file():
-            print(args[2], ' is not a file')
+    if args.veriFitFilePath is not None:
+        if not Path(args.veriFitFilePath).is_file():
+            print(args.veriFitFilePath, ' is not a file')
             return
             
-        if not args[2].endswith('.txt'):
-            print(args[2], ' is not a csv file')
+        if not args.veriFitFilePath.endswith('.txt'):
+            print(args.veriFitFilePath, ' is not a csv file')
             return
         
     # open fitNotes CSV file and read the data
-    with open(args[1], 'r', encoding="utf-8") as fitNotesFile:
+    with open(args.fitNotesFilePath, 'r', encoding="utf-8") as fitNotesFile:
+        next(fitNotesFile) # skip the header
         csvReader = csv.reader(fitNotesFile)
         with open('newVeriFitBackup.txt', 'w', encoding="utf-8") as newFile:
             # write the data from the FitNotes file to be in the format for VeriFit
             newFile.write(VERIFIT_COLUMNS)
             for row in csvReader:
-                newRow = f"{row[0]},{row[1]},{row[2]},{row[3]},{row[5]}"
+                newRow = f"{row[0]},{row[1]},{row[2]},{row[3]},{row[5]},\n"
                 #print(newRow)
                 newFile.write(newRow)
             
     # merge the verifit backup data if it exists.    
-    if args[2] is not None:
-        with open(args[2], 'r', encoding="utf-8") as veriFitFile:
+    if args.veriFitFilePath is not None:
+        with open(args.veriFitFilePath, 'r', encoding="utf-8") as veriFitFile:
             lines = veriFitFile.readlines()
             with open('newVeriFitBackup.txt', 'a', encoding="utf-8") as newFile:
                 for line in lines:
-                    newFile.write(line)
+                    newFile.write(line+'\n')
                     
     print("Operation Completed!")
             
